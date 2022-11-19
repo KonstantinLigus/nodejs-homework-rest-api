@@ -2,7 +2,7 @@ const Contact = require("./schemas/contacts");
 const User = require("./schemas/users");
 
 const listContacts = async () => {
-  const contacts = Contact.find();
+  const contacts = await Contact.find();
   return contacts;
 };
 const getContactById = async (contactId) => {
@@ -11,17 +11,17 @@ const getContactById = async (contactId) => {
 };
 
 const removeContact = async (contactId) => {
-  const deletedContact = Contact.findByIdAndDelete(contactId);
+  const deletedContact = await Contact.findByIdAndDelete(contactId);
   return deletedContact;
 };
 
 const addContact = async (contact) => {
-  const newContact = Contact.create(contact);
+  const newContact = await Contact.create(contact);
   return newContact;
 };
 
 const updateContact = async (contactId, body) => {
-  const updatedContact = Contact.findByIdAndUpdate(contactId, body, {
+  const updatedContact = await Contact.findByIdAndUpdate(contactId, body, {
     new: true,
   });
   return updatedContact;
@@ -30,12 +30,12 @@ const updateContact = async (contactId, body) => {
 // Auth
 
 const addUser = async (user) => {
-  const newUser = User.create(user);
+  const newUser = await User.create(user);
   return newUser;
 };
 
 const getUserByEmail = async (email) => {
-  const user = User.findOne({ email });
+  const user = await User.findOne({ email });
   return user;
 };
 const updateUser = async (id, body) => {
