@@ -3,7 +3,6 @@ const tryCatchWrapper = (callback) => {
     try {
       await callback(req, res, next);
     } catch (error) {
-      error.status = 404;
       next(error);
     }
   };
