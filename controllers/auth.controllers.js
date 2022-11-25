@@ -1,12 +1,14 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const gravatar = require("gravatar");
 const { addUser, getUserByEmail, updateUser } = require("../models");
 
 const userRegistration = async (req, res, next) => {
-  const password = req.body.password;
+  const { password, email } = req.body;
   const salt = await bcrypt.genSalt();
   const hashedPassword = await bcrypt.hash(password, salt);
   req.body.password = hashedPassword;
+  req.body.avatarURL = gravatar.url(email);
   try {
     const user = await addUser(req.body);
     res.status(201).json({
@@ -62,4 +64,13 @@ const userCurrent = async (req, res, next) => {
   const { email, subscription } = req.user;
   res.status(200).json({ email, subscription });
 };
-module.exports = { userRegistration, userLogin, userLogout, userCurrent };
+
+const modifyUserAvatar = async (req, res, next) => {};
+
+module.exports = {
+  userRegistration,
+  userLogin,
+  userLogout,
+  userCurrent,
+  modifyUserAvatar,
+};
