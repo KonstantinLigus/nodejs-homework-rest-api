@@ -1,7 +1,10 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const gravatar = require("gravatar");
+const Jimp = require("jimp");
+const path = require("path");
 const { addUser, getUserByEmail, updateUser } = require("../models");
+const fs = require("fs");
 
 const userRegistration = async (req, res, next) => {
   const { password, email } = req.body;
@@ -65,7 +68,19 @@ const userCurrent = async (req, res, next) => {
   res.status(200).json({ email, subscription });
 };
 
-const modifyUserAvatar = async (req, res, next) => {};
+const modifyUserAvatar = async (req, res, next) => {
+  const avatarFile = await Jimp.read(req.file.path);
+  const newPath =
+    path.join("public/avatars", "name.") + avatarFile.getExtension();
+  fs.unlink("tmp/" + req.file.filename, (err) => {
+    if (err) {
+      next(err);
+    }
+  });
+  avatarFile.resize(250, 250).write(newPath);
+
+  res.status(200).json({ avatarURL: newPath });
+};
 
 module.exports = {
   userRegistration,
