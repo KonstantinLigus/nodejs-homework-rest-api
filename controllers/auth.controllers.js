@@ -1,12 +1,21 @@
+const path = require("path");
+const fs = require("fs/promises");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const gravatar = require("gravatar");
+require("dotenv").config();
+const Jimp = require("jimp");
+const { v4: uuid } = require("uuid");
 const { addUser, getUserByEmail, updateUser } = require("../models");
 
+const { PORT } = process.env;
+
 const userRegistration = async (req, res, next) => {
-  const password = req.body.password;
+  const { password, email } = req.body;
   const salt = await bcrypt.genSalt();
   const hashedPassword = await bcrypt.hash(password, salt);
   req.body.password = hashedPassword;
+  req.body.avatarURL = gravatar.url(email);
   try {
     const user = await addUser(req.body);
     res.status(201).json({
@@ -62,4 +71,22 @@ const userCurrent = async (req, res, next) => {
   const { email, subscription } = req.user;
   res.status(200).json({ email, subscription });
 };
-module.exports = { userRegistration, userLogin, userLogout, userCurrent };
+
+const modifyUserAvatar = async (req, res, next) => {
+  const avatarFile = await Jimp.read(req.file.path);
+  const fileName = uuid() + "." + avatarFile.getExtension();
+  const newPath = path.join("public/avatars", fileName);
+  avatarFile.resize(250, 250).write(newPath);
+  await fs.unlink("tmp/" + req.file.filename);
+  const avatarURL = `http://localhost:${PORT}/avatars/${fileName}`;
+  const userFromBD = await updateUser(req.user._id, { avatarURL });
+  res.status(200).json({ avatarURL: userFromBD.avatarURL });
+};
+
+module.exports = {
+  userRegistration,
+  userLogin,
+  userLogout,
+  userCurrent,
+  modifyUserAvatar,
+};
