@@ -6,9 +6,15 @@ const gravatar = require("gravatar");
 require("dotenv").config();
 const Jimp = require("jimp");
 const { v4: uuid } = require("uuid");
-const { addUser, getUserByEmail, updateUser } = require("../models");
+const sgMail = require("@sendgrid/mail");
+const {
+  addUser,
+  getUserByEmail,
+  updateUser,
+  getUserByVerificationToken,
+} = require("../models");
 
-const { PORT } = process.env;
+const { PORT, EMAIL_API_KEY, EMAIL_FROM } = process.env;
 
 const userRegistration = async (req, res, next) => {
   const { password, email } = req.body;
@@ -16,8 +22,18 @@ const userRegistration = async (req, res, next) => {
   const hashedPassword = await bcrypt.hash(password, salt);
   req.body.password = hashedPassword;
   req.body.avatarURL = gravatar.url(email);
+  const verificationToken = uuid();
+  req.body.verificationToken = verificationToken;
+  sgMail.setApiKey(EMAIL_API_KEY);
+  const msg = {
+    to: email,
+    from: EMAIL_FROM,
+    subject: "User verificaton",
+    html: `<a href="http://localhost:${PORT}/api/users/verify/${verificationToken}">Verify</a>`,
+  };
   try {
     const user = await addUser(req.body);
+    await sgMail.send(msg);
     res.status(201).json({
       user: {
         email: user.email,
@@ -45,6 +61,11 @@ const userLogin = async (req, res, next) => {
   );
   if (!isComparedPasswordTheSame) {
     const error = new Error("Email or password is wrong");
+    error.status = 401;
+    throw error;
+  }
+  if (!userFromDB.verify) {
+    const error = new Error("The user's email was not verified");
     error.status = 401;
     throw error;
   }
@@ -82,6 +103,15 @@ const modifyUserAvatar = async (req, res, next) => {
   const userFromBD = await updateUser(req.user._id, { avatarURL });
   res.status(200).json({ avatarURL: userFromBD.avatarURL });
 };
+const verifyUser = async (req, res, next) => {
+  const user = await getUserByVerificationToken(req.params.verificationToken);
+  if (!user) {
+    const error = new Error("User not found");
+    error.status = 404;
+    throw error;
+  }
+  res.status(200).json({ message: "Verification successful" });
+};
 
 module.exports = {
   userRegistration,
@@ -89,4 +119,5 @@ module.exports = {
   userLogout,
   userCurrent,
   modifyUserAvatar,
+  verifyUser,
 };
