@@ -47,13 +47,6 @@ const getUserById = async (id) => {
   const user = await User.findById(id);
   return user;
 };
-const getUserByVerificationToken = async (verificationToken) => {
-  const user = await User.findOneAndUpdate(
-    { verificationToken },
-    { verificationToken: null, verify: true }
-  );
-  return user;
-};
 
 module.exports = {
   listContacts,
@@ -65,5 +58,4 @@ module.exports = {
   getUserByEmail,
   updateUser,
   getUserById,
-  getUserByVerificationToken,
 };

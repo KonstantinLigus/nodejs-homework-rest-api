@@ -9,7 +9,6 @@ const {
   userLogout,
   userCurrent,
   modifyUserAvatar,
-  verifyUser,
 } = require("../../controllers/auth.controllers");
 const validationToken = require("../../middleware/validationToken");
 const { upload } = require("../../middleware/UploadFile");
@@ -32,5 +31,5 @@ authRouter.patch(
   tryCatchWrapper(upload.single("avatar")),
   tryCatchWrapper(modifyUserAvatar)
 );
-authRouter.get("/verify/:verificationToken", tryCatchWrapper(verifyUser));
+
 module.exports = authRouter;
