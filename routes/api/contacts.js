@@ -2,7 +2,7 @@ const express = require("express");
 
 const router = express.Router();
 
-const tryCatchWrapper = require("../../helpers");
+const { tryCatchWrapper } = require("../../helpers");
 
 const {
   getContacts,
