@@ -27,9 +27,13 @@ const userRegistration = async (req, res, next) => {
     const user = await addUser(req.body);
     sendEmail({ email, verificationToken });
     res.status(201).json({
-      user: {
-        email: user.email,
-        subscription: user.subscription,
+      data: {
+        user: {
+          name: user.name,
+          email: user.email,
+          subscription: user.subscription,
+        },
+        token: verificationToken,
       },
     });
   } catch (error) {

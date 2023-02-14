@@ -2,7 +2,7 @@ const express = require("express");
 const authRouter = express.Router();
 const { tryCatchWrapper } = require("../../helpers");
 const validationBody = require("../../middleware/validationBody");
-const { schemaReg } = require("../../schemas.joi/schema.joi.auth");
+const { schemaReg, schemaLogIn } = require("../../schemas.joi/schema.joi.auth");
 const { schemaEmail } = require("../../schemas.joi/schema.joi.email");
 const {
   userRegistration,
@@ -23,7 +23,7 @@ authRouter.post(
 );
 authRouter.post(
   "/login",
-  validationBody(schemaReg),
+  validationBody(schemaLogIn),
   tryCatchWrapper(userLogin)
 );
 authRouter.post("/current", validationToken, tryCatchWrapper(userCurrent));
