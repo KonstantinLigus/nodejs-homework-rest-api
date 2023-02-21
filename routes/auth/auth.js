@@ -26,7 +26,7 @@ authRouter.post(
   validationBody(schemaLogIn),
   tryCatchWrapper(userLogin)
 );
-authRouter.post("/current", validationToken, tryCatchWrapper(userCurrent));
+authRouter.get("/current", validationToken, tryCatchWrapper(userCurrent));
 authRouter.post("/logout", validationToken, tryCatchWrapper(userLogout));
 authRouter.patch(
   "/avatars",

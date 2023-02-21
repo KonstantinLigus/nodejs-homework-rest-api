@@ -1,6 +1,6 @@
 const express = require("express");
 
-const router = express.Router();
+const contactsRouter = express.Router();
 
 const { tryCatchWrapper } = require("../../helpers");
 
@@ -18,27 +18,27 @@ const {
   schemaPatchContact,
 } = require("../../schemas.joi/schema.joi");
 
-router.get("/", tryCatchWrapper(getContacts));
+contactsRouter.get("/", tryCatchWrapper(getContacts));
 
-router.get("/:contactId", tryCatchWrapper(getContactByID));
+contactsRouter.get("/:contactId", tryCatchWrapper(getContactByID));
 
-router.post(
+contactsRouter.post(
   "/",
   validationBody(schemaPostContact),
   tryCatchWrapper(postContact)
 );
 
-router.delete("/:contactId", tryCatchWrapper(deleteContact));
+contactsRouter.delete("/:contactId", tryCatchWrapper(deleteContact));
 
-router.put(
+contactsRouter.put(
   "/:contactId",
   validationBody(schemaPutContact),
   tryCatchWrapper(putContact)
 );
-router.patch(
+contactsRouter.patch(
   "/:contactId/favorite",
   validationBody(schemaPatchContact),
   tryCatchWrapper(putContact)
 );
 
-module.exports = router;
+module.exports = contactsRouter;

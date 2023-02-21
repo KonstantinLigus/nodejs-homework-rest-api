@@ -8,7 +8,7 @@ const {
 
 const getContacts = async (req, res, next) => {
   const contacts = await listContacts();
-  res.status(200).json({ data: contacts });
+  res.status(200).json(contacts);
 };
 const getContactByID = async (req, res, next) => {
   const { contactId } = req.params;
@@ -19,7 +19,7 @@ const getContactByID = async (req, res, next) => {
     if (!contact) {
       throw new Error("contact's id is not found");
     }
-    res.status(200).json({ data: contact });
+    res.status(200).json({ contact });
   } catch (error) {
     error.status = 404;
     throw error;
@@ -27,18 +27,18 @@ const getContactByID = async (req, res, next) => {
 };
 const postContact = async (req, res, next) => {
   const newContact = await addContact(req.body);
-  res.status(201).json({ data: newContact });
+  res.status(201).json({ newContact });
 };
 const deleteContact = async (req, res, next) => {
   const { contactId } = req.params;
   try {
-    const contact = await removeContact(
+    const deletedContact = await removeContact(
       contactId
     ); /* выбросит ошибку если contactId не валиден, вернеи null, если валидный contactId не найден */
-    if (!contact) {
+    if (!deletedContact) {
       throw new Error("contact's id is not found");
     }
-    res.status(200).json({ message: "contact deleted" });
+    res.status(200).json({ deletedContact, message: "contact deleted" });
   } catch (error) {
     error.status = 404;
     throw error;
@@ -54,7 +54,7 @@ const putContact = async (req, res, next) => {
     if (!updatedContact) {
       throw new Error("contact's id is not found");
     }
-    res.status(200).json({ data: updatedContact });
+    res.status(200).json({ updatedContact });
   } catch (error) {
     error.status = 404;
     throw error;

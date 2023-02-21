@@ -25,16 +25,14 @@ const userRegistration = async (req, res, next) => {
   req.body.verificationToken = verificationToken;
   try {
     const user = await addUser(req.body);
-    sendEmail({ email, verificationToken });
+    // sendEmail({ email, verificationToken });
     res.status(201).json({
-      data: {
-        user: {
-          name: user.name,
-          email: user.email,
-          subscription: user.subscription,
-        },
-        token: verificationToken,
+      user: {
+        name: user.name,
+        email: user.email,
+        subscription: user.subscription,
       },
+      token: verificationToken,
     });
   } catch (error) {
     console.log(error);
@@ -48,7 +46,7 @@ const userLogin = async (req, res, next) => {
   const { email, password } = req.body;
   const userFromDB = await getUserByEmail(email);
   if (!userFromDB) {
-    const error = new Error("Email or password is wrong");
+    const error = new Error("Email is wrong");
     error.status = 401;
     throw error;
   }
@@ -57,22 +55,26 @@ const userLogin = async (req, res, next) => {
     userFromDB.password
   );
   if (!isComparedPasswordTheSame) {
-    const error = new Error("Email or password is wrong");
+    const error = new Error("Password is wrong");
     error.status = 401;
     throw error;
   }
-  if (!userFromDB.verify) {
-    const error = new Error("The user's email was not verified");
-    error.status = 401;
-    throw error;
-  }
+  // if (!userFromDB.verify) {
+  //   const error = new Error("The user's email was not verified");
+  //   error.status = 401;
+  //   throw error;
+  // }
 
   const token = jwt.sign({ _id: userFromDB._id }, process.env.JWT_SECRET);
   await updateUser(userFromDB._id, { token });
 
   res.status(200).json({
+    user: {
+      name: userFromDB.name,
+      email: userFromDB.email,
+      subscription: userFromDB.subscription,
+    },
     token,
-    user: { email: userFromDB.email, subscription: userFromDB.subscription },
   });
 };
 
@@ -87,8 +89,8 @@ const userLogout = async (req, res, next) => {
 
 const userCurrent = async (req, res, next) => {
   // проверка токена в предыдущем мидлваре
-  const { email, subscription } = req.user;
-  res.status(200).json({ email, subscription });
+  const { name, email, subscription } = req.user;
+  res.status(200).json({ name, email, subscription });
 };
 
 const modifyUserAvatar = async (req, res, next) => {
