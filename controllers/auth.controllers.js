@@ -12,6 +12,7 @@ const {
   getUserByVerificationToken,
 } = require("../models");
 const { sendEmail } = require("../helpers");
+const mongoose = require("mongoose");
 require("dotenv").config();
 const { PORT } = process.env;
 
@@ -24,15 +25,21 @@ const userRegistration = async (req, res, next) => {
   const verificationToken = uuid();
   req.body.verificationToken = verificationToken;
   try {
-    const user = await addUser(req.body);
-    // sendEmail({ email, verificationToken });
+    const userId = new mongoose.Types.ObjectId();
+    const token = jwt.sign({ _id: userId }, process.env.JWT_SECRET);
+    const userFromDB = await addUser({
+      ...req.body,
+      _id: userId,
+      token,
+    });
+    sendEmail({ email, verificationToken });
     res.status(201).json({
-      user: {
-        name: user.name,
-        email: user.email,
-        subscription: user.subscription,
+      createdUser: {
+        name: userFromDB.name,
+        email: userFromDB.email,
+        subscription: userFromDB.subscription,
       },
-      token: verificationToken,
+      token,
     });
   } catch (error) {
     console.log(error);
@@ -59,11 +66,11 @@ const userLogin = async (req, res, next) => {
     error.status = 401;
     throw error;
   }
-  // if (!userFromDB.verify) {
-  //   const error = new Error("The user's email was not verified");
-  //   error.status = 401;
-  //   throw error;
-  // }
+  if (!userFromDB.verify) {
+    const error = new Error("The user's email was not verified");
+    error.status = 401;
+    throw error;
+  }
 
   const token = jwt.sign({ _id: userFromDB._id }, process.env.JWT_SECRET);
   await updateUser(userFromDB._id, { token });

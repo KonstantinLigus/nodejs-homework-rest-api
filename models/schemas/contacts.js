@@ -5,12 +5,12 @@ const contact = new mongoose.Schema({
     type: String,
     required: [true, "Set name for contact"],
   },
-  email: {
-    type: String,
-  },
   phone: {
     type: String,
     required: [true, "Set phone for contact"],
+  },
+  email: {
+    type: String,
   },
   favorite: {
     type: Boolean,

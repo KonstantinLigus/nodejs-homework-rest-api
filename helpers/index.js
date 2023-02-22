@@ -1,5 +1,5 @@
 require("dotenv").config();
-const { PORT, EMAIL_API_KEY, EMAIL_FROM } = process.env;
+const { PORT, SEND_GRID_EMAIL_API_KEY, EMAIL_FROM } = process.env;
 const sgMail = require("@sendgrid/mail");
 
 const tryCatchWrapper = (callback) => {
@@ -13,14 +13,20 @@ const tryCatchWrapper = (callback) => {
 };
 
 const sendEmail = async ({ email, verificationToken }) => {
-  sgMail.setApiKey(EMAIL_API_KEY);
-  const msg = {
-    to: email,
-    from: EMAIL_FROM,
-    subject: "User verificaton",
-    html: `<a href="http://localhost:${PORT}/api/users/verify/${verificationToken}">Verify</a>`,
-  };
-  await sgMail.send(msg);
+  try {
+    sgMail.setApiKey(SEND_GRID_EMAIL_API_KEY);
+    const msg = {
+      to: email,
+      from: EMAIL_FROM,
+      subject: "User verificaton",
+      html: `<a href="http://localhost:${PORT}/users/verify/${verificationToken}">Verify</a>`,
+    };
+    await sgMail.send(msg);
+  } catch (error) {
+    console.error("sendGridError", error);
+  }
 };
 
 module.exports = { tryCatchWrapper, sendEmail };
+// kostya1989com@gmail.com
+// kostya12345

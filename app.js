@@ -5,6 +5,7 @@ const cors = require("cors");
 
 const contactsRouter = require("./routes/api/contacts");
 const authRouter = require("./routes/auth/auth");
+const validationToken = require("./middleware/validationToken");
 
 const app = express();
 
@@ -15,7 +16,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use(express.static(path.join(__dirname, "public")));
-app.use("/contacts", contactsRouter);
+app.use("/contacts", validationToken, contactsRouter);
 app.use("/users", authRouter);
 
 app.use((req, res) => {
