@@ -12,6 +12,7 @@ const {
   modifyUserAvatar,
   verifyUser,
   verifyUserRepeat,
+  changeUserSubscription,
 } = require("../../controllers/auth.controllers");
 const validationToken = require("../../middleware/validationToken");
 const { upload } = require("../../middleware/UploadFile");
@@ -39,5 +40,10 @@ authRouter.post(
   "/verify",
   validationBody(schemaEmail),
   tryCatchWrapper(verifyUserRepeat)
+);
+authRouter.post(
+  "/subscription",
+  validationToken,
+  tryCatchWrapper(changeUserSubscription)
 );
 module.exports = authRouter;

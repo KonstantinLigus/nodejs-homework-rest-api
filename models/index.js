@@ -39,9 +39,10 @@ const getUserByEmail = async (email) => {
   return user;
 };
 const updateUser = async (id, body) => {
-  return await User.findByIdAndUpdate(id, body, {
+  const user = await User.findByIdAndUpdate(id, body, {
     new: true,
   });
+  return user;
 };
 const getUserById = async (id) => {
   const user = await User.findById(id);

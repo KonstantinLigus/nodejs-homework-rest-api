@@ -6,11 +6,11 @@ const validationToken = async (req, res, next) => {
   const [tokenType, token] = authHeader.split(" ");
   if (tokenType === "Bearer" && token) {
     try {
-      const verifiedTokenUser = jwt.verify(
+      const userFromToken = jwt.verify(
         token,
         process.env.JWT_SECRET
       ); /* verify выбросит ошибку, если token invalid */
-      const user = await getUserById(verifiedTokenUser._id);
+      const user = await getUserById(userFromToken._id);
       if (!user || user.token !== token) {
         throw new Error();
       }

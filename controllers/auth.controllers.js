@@ -12,7 +12,6 @@ const {
   getUserByVerificationToken,
 } = require("../models");
 const { sendEmail } = require("../helpers");
-const mongoose = require("mongoose");
 require("dotenv").config();
 const { PORT } = process.env;
 
@@ -25,21 +24,17 @@ const userRegistration = async (req, res, next) => {
   const verificationToken = uuid();
   req.body.verificationToken = verificationToken;
   try {
-    const userId = new mongoose.Types.ObjectId();
-    const token = jwt.sign({ _id: userId }, process.env.JWT_SECRET);
-    const userFromDB = await addUser({
-      ...req.body,
-      _id: userId,
-      token,
-    });
-    sendEmail({ email, verificationToken });
+    const userFromDB = await addUser(req.body);
+    const token = jwt.sign({ _id: userFromDB._id }, process.env.JWT_SECRET);
+    const userFromDBwithToken = await updateUser(userFromDB._id, { token });
+    await sendEmail({ email, verificationToken });
     res.status(201).json({
       createdUser: {
         name: userFromDB.name,
         email: userFromDB.email,
         subscription: userFromDB.subscription,
       },
-      token,
+      token: userFromDBwithToken.token,
     });
   } catch (error) {
     console.log(error);
@@ -91,7 +86,7 @@ const userLogout = async (req, res, next) => {
   token = null;
   const user = await updateUser(_id, { token });
   console.log(user);
-  res.status(204).json();
+  res.status(204).json({ message: "user was logged out" });
 };
 
 const userCurrent = async (req, res, next) => {
@@ -134,6 +129,23 @@ const verifyUserRepeat = async (req, res, next) => {
   sendEmail({ email, verificationToken: userFromBD.verificationToken });
   res.status(200).json({ message: "Verification email sent" });
 };
+
+const changeUserSubscription = async (req, res, next) => {
+  const { subscription } = req.body;
+  if (
+    subscription === "starter" ||
+    subscription === "pro" ||
+    subscription === "business"
+  ) {
+    const { _id } = req.user;
+    const userFromDB = await updateUser(_id, { subscription });
+    res.status(201).json({ subscription: userFromDB.subscription });
+  } else {
+    const error = new Error("Invalid subscription type");
+    error.status = 400;
+    throw error;
+  }
+};
 module.exports = {
   userRegistration,
   userLogin,
@@ -142,4 +154,5 @@ module.exports = {
   modifyUserAvatar,
   verifyUser,
   verifyUserRepeat,
+  changeUserSubscription,
 };
