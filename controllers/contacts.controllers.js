@@ -46,7 +46,7 @@ const deleteContact = async (req, res, next) => {
     throw error;
   }
 };
-const putContact = async (req, res, next) => {
+const patchContact = async (req, res, next) => {
   const { contactId } = req.params;
   try {
     const updatedContact = await updateContact(
@@ -68,5 +68,5 @@ module.exports = {
   getContactByID,
   postContact,
   deleteContact,
-  putContact,
+  patchContact,
 };

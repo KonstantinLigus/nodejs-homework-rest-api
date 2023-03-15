@@ -9,12 +9,12 @@ const {
   getContactByID,
   postContact,
   deleteContact,
-  putContact,
+  patchContact,
 } = require("../../controllers/contacts.controllers");
 const validationBody = require("../../middleware/validationBody");
 const {
   schemaPostContact,
-  schemaPutContact,
+  // schemaPutContact,
   schemaPatchContact,
 } = require("../../schemas.joi/schema.joi");
 
@@ -30,15 +30,15 @@ contactsRouter.post(
 
 contactsRouter.delete("/:contactId", tryCatchWrapper(deleteContact));
 
-contactsRouter.put(
+contactsRouter.patch(
   "/:contactId",
-  validationBody(schemaPutContact),
-  tryCatchWrapper(putContact)
+  validationBody(schemaPatchContact),
+  tryCatchWrapper(patchContact)
 );
 contactsRouter.patch(
   "/:contactId/favorite",
   validationBody(schemaPatchContact),
-  tryCatchWrapper(putContact)
+  tryCatchWrapper(patchContact)
 );
 
 module.exports = contactsRouter;
