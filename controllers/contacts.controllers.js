@@ -4,6 +4,7 @@ const {
   removeContact,
   addContact,
   updateContact,
+  listFavoriteContacts,
 } = require("../models");
 
 const getContacts = async (req, res, next) => {
@@ -24,6 +25,10 @@ const getContactByID = async (req, res, next) => {
     error.status = 404;
     throw error;
   }
+};
+const getFavoritesContacts = async (req, res, next) => {
+  const contacts = await listFavoriteContacts(req);
+  res.status(200).json(contacts);
 };
 const postContact = async (req, res, next) => {
   const { id } = req.user;
@@ -69,4 +74,5 @@ module.exports = {
   postContact,
   deleteContact,
   patchContact,
+  getFavoritesContacts,
 };

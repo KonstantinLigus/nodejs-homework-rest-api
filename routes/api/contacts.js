@@ -10,6 +10,7 @@ const {
   postContact,
   deleteContact,
   patchContact,
+  getFavoritesContacts,
 } = require("../../controllers/contacts.controllers");
 const validationBody = require("../../middleware/validationBody");
 const {
@@ -21,6 +22,8 @@ const {
 contactsRouter.get("/", tryCatchWrapper(getContacts));
 
 contactsRouter.get("/:contactId", tryCatchWrapper(getContactByID));
+
+contactsRouter.get("/fetch/favorites", tryCatchWrapper(getFavoritesContacts));
 
 contactsRouter.post(
   "/",
@@ -35,10 +38,10 @@ contactsRouter.patch(
   validationBody(schemaPatchContact),
   tryCatchWrapper(patchContact)
 );
-contactsRouter.patch(
-  "/:contactId/favorite",
-  validationBody(schemaPatchContact),
-  tryCatchWrapper(patchContact)
-);
+// contactsRouter.patch(
+//   "/:contactId/favorite",
+//   validationBody(schemaPatchContact),
+//   tryCatchWrapper(patchContact)
+// );
 
 module.exports = contactsRouter;

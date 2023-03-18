@@ -10,6 +10,11 @@ const getContactById = async (contactId) => {
   return contact;
 };
 
+const listFavoriteContacts = async (req) => {
+  const contacts = await Contact.find({ owner: req.user._id, favorite: true });
+  return contacts;
+};
+
 const removeContact = async (contactId) => {
   const deletedContact = await Contact.findByIdAndDelete(contactId);
   return deletedContact;
@@ -67,4 +72,5 @@ module.exports = {
   updateUser,
   getUserById,
   getUserByVerificationToken,
+  listFavoriteContacts,
 };
