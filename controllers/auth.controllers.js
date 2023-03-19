@@ -33,13 +33,19 @@ const userRegistration = async (req, res, next) => {
         name: userFromDB.name,
         email: userFromDB.email,
         subscription: userFromDB.subscription,
+        avatarURL: userFromDBwithToken.avatarURL,
       },
       token: userFromDBwithToken.token,
     });
   } catch (error) {
     console.log(error);
     error.status = 409;
-    error.message = "Email in use";
+    if (error.keyValue.name) {
+      error.message = "name in use";
+    }
+    if (error.keyValue.email) {
+      error.message = "email in use";
+    }
     throw error;
   }
 };
@@ -75,6 +81,7 @@ const userLogin = async (req, res, next) => {
       name: userFromDB.name,
       email: userFromDB.email,
       subscription: userFromDB.subscription,
+      avatarURL: userFromDB.avatarURL,
     },
     token,
   });
@@ -91,8 +98,8 @@ const userLogout = async (req, res, next) => {
 
 const userCurrent = async (req, res, next) => {
   // проверка токена в предыдущем мидлваре
-  const { name, email, subscription } = req.user;
-  res.status(200).json({ name, email, subscription });
+  const { name, email, subscription, avatarURL } = req.user;
+  res.status(200).json({ name, email, subscription, avatarURL });
 };
 
 const modifyUserAvatar = async (req, res, next) => {

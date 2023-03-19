@@ -14,8 +14,4 @@ const schemaPatchContact = Joi.object({
   favorite: Joi.bool(),
 }).min(1);
 
-// const schemaPatchContact = Joi.object({
-//   favorite: Joi.bool().required(),
-// });
-
 module.exports = { schemaPostContact, schemaPatchContact };

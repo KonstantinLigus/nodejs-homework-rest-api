@@ -15,7 +15,6 @@ const {
 const validationBody = require("../../middleware/validationBody");
 const {
   schemaPostContact,
-  // schemaPutContact,
   schemaPatchContact,
 } = require("../../schemas.joi/schema.joi");
 
@@ -38,10 +37,5 @@ contactsRouter.patch(
   validationBody(schemaPatchContact),
   tryCatchWrapper(patchContact)
 );
-// contactsRouter.patch(
-//   "/:contactId/favorite",
-//   validationBody(schemaPatchContact),
-//   tryCatchWrapper(patchContact)
-// );
 
 module.exports = contactsRouter;
