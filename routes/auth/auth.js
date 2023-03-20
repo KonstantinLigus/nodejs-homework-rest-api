@@ -15,7 +15,7 @@ const {
   changeUserSubscription,
 } = require("../../controllers/auth.controllers");
 const validationToken = require("../../middleware/validationToken");
-const { upload } = require("../../middleware/UploadFile");
+const { upload } = require("../../middleware/uploadFile");
 
 authRouter.post(
   "/signup",
