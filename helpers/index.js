@@ -1,5 +1,5 @@
 require("dotenv").config();
-const { PORT, SEND_GRID_EMAIL_API_KEY, EMAIL_FROM } = process.env;
+const { SEND_GRID_EMAIL_API_KEY, EMAIL_FROM } = process.env;
 const sgMail = require("@sendgrid/mail");
 
 const USERS_BASE_URL = "https://phonebook-api-xnds.onrender.com";
