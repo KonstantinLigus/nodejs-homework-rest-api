@@ -2,6 +2,8 @@ require("dotenv").config();
 const { PORT, SEND_GRID_EMAIL_API_KEY, EMAIL_FROM } = process.env;
 const sgMail = require("@sendgrid/mail");
 
+const USERS_BASE_URL = "https://phonebook-api-xnds.onrender.com";
+
 const tryCatchWrapper = (callback) => {
   return async (req, res, next) => {
     try {
@@ -19,7 +21,7 @@ const sendEmail = async ({ email, verificationToken }) => {
       to: email,
       from: EMAIL_FROM,
       subject: "User verificaton",
-      html: `<a href="http://localhost:${PORT}/users/verify/${verificationToken}">Verify</a>`,
+      html: `<a href="http://${USERS_BASE_URL}:${PORT}/users/verify/${verificationToken}">Verify</a>`,
     };
     await sgMail.send(msg);
   } catch (error) {
@@ -28,5 +30,3 @@ const sendEmail = async ({ email, verificationToken }) => {
 };
 
 module.exports = { tryCatchWrapper, sendEmail };
-// kostya1989com@gmail.com
-// kostya12345
