@@ -21,7 +21,7 @@ const sendEmail = async ({ email, verificationToken }) => {
       to: email,
       from: EMAIL_FROM,
       subject: "User verificaton",
-      html: `<a href="${USERS_BASE_URL}:${PORT}/users/verify/${verificationToken}">Verify</a>`,
+      html: `<a href="${USERS_BASE_URL}/users/verify/${verificationToken}">Verify</a>`,
     };
     await sgMail.send(msg);
   } catch (error) {
